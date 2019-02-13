@@ -1,6 +1,6 @@
-# platform2
+# oj_backend
 
-for school
+for edu_platform
 
 ## QuickStart
 
