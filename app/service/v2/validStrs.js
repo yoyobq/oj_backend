@@ -8,8 +8,11 @@ const TableName = 'edu_valid_strs';
 
 class ValidStrsService extends Service {
   async show(row) {
-    const user = await this.app.mysql.get(TableName, row);
-    return user;
+    const result = await this.app.mysql.get(TableName, row);
+    const vaildStr = await this.createVaildString(result);
+
+    // 不返回查询到的数据，直接返回验证字符串
+    return vaildStr;
   }
 
   // get 带参数（?xx=00）
@@ -18,11 +21,6 @@ class ValidStrsService extends Service {
       where: params,
     });
 
-    // console.log(result);
-    // 此处获取的数据会有几种可能性
-    // 1 null 这种情况让controller去处理
-    // 2 [{} {} {}],这是最符合期待的结果，index函数展示大量数据
-    // 3 [{}]，只取到一个符合条件的数据，此时记得引用的时候要加下标
     return result;
   }
 
@@ -31,10 +29,7 @@ class ValidStrsService extends Service {
     params.saltStr = Math.random().toString(36).substr(2, 4);
     const result = await this.app.mysql.insert(TableName, params);
 
-    // 生成验证码
-    const sha1 = crypto.createHash('sha1');
-    sha1.update(params.indexStr + params.saltStr);
-    result.vaildStr = sha1.digest('hex');
+    result.vaildStr = await this.createVaildString(params);
 
     return result;
   }
@@ -44,10 +39,17 @@ class ValidStrsService extends Service {
   //   return result;
   // }
 
-  // async destroy(params) {
-  //   const result = await this.app.mysql.delete(TableName, params);
-  //   return result;
-  // }
+  async destroy(params) {
+    const result = await this.app.mysql.delete(TableName, params);
+    return result;
+  }
+
+  // 生成验证码
+  async createVaildString(validInfo) {
+    const sha1 = crypto.createHash('sha1');
+    sha1.update(validInfo.indexStr + validInfo.saltStr);
+    return sha1.digest('hex');
+  }
 }
 
 module.exports = ValidStrsService;

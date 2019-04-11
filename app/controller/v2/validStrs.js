@@ -7,24 +7,27 @@ const Controller = require('egg').Controller;
 class ValidStrsController extends Controller {
   async show() {
     const ctx = this.ctx;
-    // const userId = ctx.params.id;
-    // console.log(typeof ctx.query);
-    const row = ctx.query;
-    const user = await ctx.service.v2.validStrs.show(row);
-    // if (user !== null) {
-    //   ctx.body = user;
-    //   ctx.status = 200;
-    // } else {
-    //   ctx.status = 404;
-    // }
-    ctx.body = user;
-    ctx.status = 200;
+    const row = ctx.params;
+    const result = await ctx.service.v2.validStrs.show(row);
+
+    if (result !== null) {
+      const buildDate = Date.parse(result.buildDate);
+      const periodMinutes = result.periodMinutes;
+
+      // 此处应注意异步引起的失效问题
+      if (await this.isPastDue(buildDate, periodMinutes)) {
+        ctx.throw(403, '验证信息已过期');
+      } else {
+        ctx.body = result;
+        ctx.status = 200;
+      }
+    } else {
+      ctx.throw(404, '未找到对应的验证信息');
+    }
   }
 
   async index() {
     const ctx = this.ctx;
-    // console.log(ctx.query);
-    // 允许params为空
     let params = ctx.query.data;
 
     if (params !== undefined) {
@@ -48,32 +51,33 @@ class ValidStrsController extends Controller {
 
   async create() {
     const ctx = this.ctx;
-    let result;
-    let isAllowCreate;
+    // let result;
+    let isAllowCreate = false;
     // const params = ctx.request.body.data;
     const params = ctx.request.body.data;
 
     // 查询数据库中是已有未过期的验证码信息
-    result = await ctx.service.v2.validStrs.index(params);
-
+    const result = await ctx.service.v2.validStrs.index(params);
     if (result[0] !== undefined) {
-      const nowDate = Date.now();
+      // 若存在，查看是否过期
       const buildDate = Date.parse(result[0].buildDate);
-      const passMinutes = Math.floor((nowDate - buildDate) / 1000 / 60);
+      const periodMinutes = result[0].periodMinutes;
 
-      if (passMinutes >= result[0].periodMinutes) {
+      // console.log(result[0]);
+      const isPastDue = await this.isPastDue(buildDate, periodMinutes);
+      // 若已经过期，允许生成新验证码
+      if (isPastDue) {
+        await ctx.service.v2.validStrs.destroy(result[0]);
         isAllowCreate = true;
-      } else {
-        // 若存在未过期的同类型记录
-        isAllowCreate = false;
       }
+    } else {
+      // 若不存在，允许生成新验证码
+      isAllowCreate = true;
     }
 
     if (isAllowCreate) {
-      result = await ctx.service.v2.validStrs.create(params);
-
+      const result = await ctx.service.v2.validStrs.create(params);
       if (result.affectedRows) {
-        console.log(result);
         ctx.body = {
           id: result.insertId,
           vaildStr: result.vaildStr,
@@ -97,43 +101,46 @@ class ValidStrsController extends Controller {
     }
   }
 
-  async update() {
-    const ctx = this.ctx;
-    const row = JSON.parse(ctx.query.params);
-    // console.log(row.password);
-    const result = await ctx.service.v2.validStrs.update(row);
-
-    if (result.affectedRows) {
-      ctx.status = 204;
-    }
-  }
-
   async destroy() {
     const ctx = this.ctx;
-    // console.log(ctx);
-    const params = {
-      id: parseInt(ctx.params.id),
-    };
-    const resultAuth = await ctx.service.v2.stuFullInfo.destroy(params);
-    if (resultAuth.affectedRows) {
-      const resultAcc = await ctx.service.v2.accounts.destroy(params);
-      if (resultAcc.affectedRows) {
-        const resultInfo = await ctx.service.v2.informations.destroy(params);
-        if (resultInfo.affectedRows) {
-          ctx.body = null;
-          ctx.status = 201;
-        }
-      }
+    const row = ctx.params;
+
+    const result = await ctx.service.v2.validStrs.destroy(row);
+    if (result.affectedRows) {
+      ctx.body = null;
+      ctx.status = 202;
     } else {
       ctx.body = {
         error: 'NOT IMPLEMENTED',
-        // 在egg官方文档里，detail给了个对象数组[{  }]，个人认为不存在数组的必要
-        // 因此把他简化成了一个对象 {}
-        detail: { message: '删除帐号', field: '', code: '' },
+        detail: { message: '删除失败，未找到对应信息', field: '', code: '' },
       };
       ctx.status = 501;
     }
   }
+
+  // 验证信息是否过期
+  async isPastDue(buildDate, periodMinutes) {
+    const nowDate = Date.now();
+    const passTime = nowDate - buildDate;
+
+    // 已存的时间以分钟为单位，需要手动转换成毫秒
+    if (passTime >= periodMinutes * 60 * 1000) {
+      return true;
+    }
+    // 若存在未过期的同类型记录
+    return false;
+  }
+
+  // async update() {
+  //   const ctx = this.ctx;
+  //   const row = JSON.parse(ctx.query.params);
+  //   // console.log(row.password);
+  //   const result = await ctx.service.v2.validStrs.update(row);
+
+  //   if (result.affectedRows) {
+  //     ctx.status = 204;
+  //   }
+  // }
 }
 
 module.exports = ValidStrsController;
