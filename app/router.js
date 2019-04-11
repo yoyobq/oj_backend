@@ -15,7 +15,13 @@ module.exports = app => {
   router.resources('stuInfos', '/api/v2/stuInfos', controller.v2.stuInfos);
   router.resources('specialities', '/api/v2/specialities', controller.v2.specialities);
   router.resources('departments', '/api/v2/departments', controller.v2.departments);
+  router.resources('validStrs', '/api/v2/validStrs', controller.v2.validStrs);
+
+  // emails并不是一个数据库中的“资源”，仅仅借用了REST的语义思想，目前只能create，不知道这种做法是否合适
+  // 其实完全可以写成
+  // router.post('emails', '/api/v1/scores/wrong', controller.v2.emails.create);
   router.resources('emails', '/api/v2/emails', controller.v2.emails);
+
   // 以下是 v1 版本的数据接口，用于小马哥的 TA 系统，作为参考保留
   //                            对象名   路由url         绑定控制器
   // app.router.resources('topics', '/api/v2/topics', app.controller.topics);
