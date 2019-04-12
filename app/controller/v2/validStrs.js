@@ -130,7 +130,12 @@ class ValidStrsController extends Controller {
     // 若存在未过期的同类型记录
     return false;
   }
-
+  // 生成验证码
+  async createVaildString(validInfo) {
+    const sha1 = crypto.createHash('sha1');
+    sha1.update(validInfo.indexStr + validInfo.saltStr);
+    return sha1.digest('hex');
+  }
   // async update() {
   //   const ctx = this.ctx;
   //   const row = JSON.parse(ctx.query.params);

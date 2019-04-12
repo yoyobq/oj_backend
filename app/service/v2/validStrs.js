@@ -2,17 +2,13 @@
 
 'use strict';
 
-const crypto = require('crypto');
 const Service = require('egg').Service;
 const TableName = 'edu_valid_strs';
 
 class ValidStrsService extends Service {
   async show(row) {
     const result = await this.app.mysql.get(TableName, row);
-    const vaildStr = await this.createVaildString(result);
-
-    // 不返回查询到的数据，直接返回验证字符串
-    return vaildStr;
+    return result;
   }
 
   // get 带参数（?xx=00）
@@ -42,13 +38,6 @@ class ValidStrsService extends Service {
   async destroy(params) {
     const result = await this.app.mysql.delete(TableName, params);
     return result;
-  }
-
-  // 生成验证码
-  async createVaildString(validInfo) {
-    const sha1 = crypto.createHash('sha1');
-    sha1.update(validInfo.indexStr + validInfo.saltStr);
-    return sha1.digest('hex');
   }
 }
 
