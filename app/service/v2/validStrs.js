@@ -25,8 +25,6 @@ class ValidStrsService extends Service {
     params.saltStr = Math.random().toString(36).substr(2, 4);
     const result = await this.app.mysql.insert(TableName, params);
 
-    result.vaildStr = await this.createVaildString(params);
-
     return result;
   }
 
