@@ -5,21 +5,31 @@
 const Service = require('egg').Service;
 
 const nodemailer = require('nodemailer');
-const user_email = 'OJ_CSSE_XJTLU@outlook.com';
-// const auth_code = 'asdfadfadf';
-
-const transporter = nodemailer.createTransport({
-  service: 'Hotmail',
-  // secureConnection: true,
-  // port: 465,
-  auth: {
-    user: 'OJ_CSSE_XJTLU@outlook.com', // 账号
-    pass: 'ec9a7341ec9a734!', // 授权码
+const user_email = [
+  {
+    user: 'OJ_CSSE_XJTLU@outlook.com',
+    pass: 'ec9a7341ec9a734!',
   },
-});
+  {
+    user: 'yinliwei555@outlook.com',
+    pass: 'yinliwei55',
+  },
+];
 
 class EmailsService extends Service {
   async create(params) {
+    const theEmail = Math.floor(Math.random() * user_email.length);
+    const transporter = nodemailer.createTransport({
+      service: 'Hotmail',
+      // secureConnection: true,
+      // port: 465,
+      auth: user_email[theEmail],
+      // auth: {
+      //   user: 'OJ_CSSE_XJTLU@outlook.com', // 账号
+      //   pass: 'ec9a7341ec9a734!', // 授权码
+      // },
+    });
+
     const mailOptions = {
       from: user_email, // 发送者,与上面的user一致
       to: params.email, // 接收者,可以同时发送多个,以逗号隔开
@@ -27,6 +37,7 @@ class EmailsService extends Service {
       text: params.text, // 文本
       html: params.html,
     };
+
     try {
       await transporter.sendMail(mailOptions);
       return true;

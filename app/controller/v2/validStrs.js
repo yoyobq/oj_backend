@@ -1,4 +1,4 @@
-// app/v2/controller/vaildStrs.js
+// app/v2/controller/validStrs.js
 // 用于获取邮箱验证时的验证字符串
 'use strict';
 const crypto = require('crypto');
@@ -19,8 +19,8 @@ class ValidStrsController extends Controller {
         ctx.throw(403, '验证信息已过期');
       } else {
         // 不返回查询到的数据，直接返回验证字符串
-        const vaildStr = await this.createVaildString(result);
-        ctx.body = vaildStr;
+        const validStr = await this.createVaildString(result);
+        ctx.body = validStr;
         ctx.status = 200;
       }
     } else {
@@ -80,10 +80,11 @@ class ValidStrsController extends Controller {
     if (isAllowCreate) {
       const result = await ctx.service.v2.validStrs.create(params);
       if (result.affectedRows) {
-        const vaildInfo = await ctx.service.v2.validStrs.show({ id: result.insertId });
+        const validInfo = await ctx.service.v2.validStrs.show({ id: result.insertId });
+        ctx.status = 200;
         ctx.body = {
           id: result.insertId,
-          vaildStr: await this.createVaildString(vaildInfo),
+          validStr: await this.createVaildString(validInfo),
         };
       } else {
         ctx.body = {
