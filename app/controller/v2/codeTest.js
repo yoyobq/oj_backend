@@ -13,7 +13,7 @@ class CodeTestController extends Controller {
     const ctx = this.ctx;
     // console.log(ctx.request.body.data.code);
     const theCode = ctx.request.body.data.code;
-    const fileUrl = new URL('file:///tmp/b.js');
+    const fileUrl = new URL('file:///var/www/oj_reserve/submitCode/submitCode.js');
 
     try {
       // 此处本想用异步形式写入，执行代码，提高效率
@@ -24,7 +24,7 @@ class CodeTestController extends Controller {
       // 写入成功后，无论正确输出还是错误输出均不应该作为异常处理
       // 因此把catch到的错误也作为成功响应的status 200 输出到前端
       try {
-        const result = execSync('node /tmp/test.js', { encoding: 'utf-8' });
+        const result = execSync('node /var/www/oj_reserve/1-sumArr/run.js', { encoding: 'utf-8' });
         ctx.body = result;
       } catch (error) {
         // ！！！！！目前输出了完整的错误代码，很危险需要改进！！！！！
