@@ -1,35 +1,40 @@
-// app/v2/controller/codingQuestions.js
+// app/v2/controller/codingRecords.js
 // 用于测试代码是否正确
 'use strict';
 const Controller = require('egg').Controller;
 
-class CodingQuestionsController extends Controller {
+class CodingRecordsController extends Controller {
   async show() {
     const ctx = this.ctx;
     const row = ctx.params;
-    // console.log(row);
-    const result = await ctx.service.v2.codingQuestions.show(row);
+    const result = await ctx.service.v2.codingRecords.show(row);
 
 
     if (result) {
       ctx.body = result;
       ctx.status = 200;
     } else {
-      ctx.throw(404, '未找到对应程序题');
+      ctx.throw(404, '未找到对应做题记录');
     }
 
   }
 
   async index() {
     const ctx = this.ctx;
-    // console.log(ctx.query);
-    const params = ctx.query;
-    // console.log(typeof params);
+    let params = ctx.query;
 
+    // 以下代码用于适配实验性路由中的:uId 或 :cqId
+    // Object.keys是es6特性，该方法会返回一个由一个给定对象的自身可枚举属性组成的数组，
+    // 数组中属性名的排列顺序和使用 for...in 循环遍历该对象时返回的顺序一致。
+    // 在这里用于判断是否是空对象
+    if (Object.keys(ctx.params).length !== 0) {
+      // 若在url中存在 uId，或cqId，合并到查询条件中
+      // 若查询条件中也存在uId/cqId，覆盖之
+      params = Object.assign(params, ctx.params);
+    }
 
     if (params !== undefined) { // 此处应对params做验证，稍后添加(允许null)
-      const result = await ctx.service.v2.codingQuestions.index(params);
-
+      const result = await ctx.service.v2.codingRecords.index(params);
       // 注意这条判断，比较容易写错 [] 不是 null，也不是 undefined
       if (result[0] !== undefined) {
         ctx.body = result;
@@ -47,7 +52,7 @@ class CodingQuestionsController extends Controller {
     const params = ctx.request.body.data;
 
     // 此处是否应判断是否存在类似题目？如何判断？
-    const result = await ctx.service.v2.codingQuestions.create(params);
+    const result = await ctx.service.v2.codingRecords.create(params);
     if (result.affectedRows) {
       // console.log(result);
       ctx.body = result.insertId;
@@ -70,7 +75,7 @@ class CodingQuestionsController extends Controller {
     // console.log(row)
     // console.log(params);
 
-    const result = await ctx.service.v2.codingQuestions.update(params);
+    const result = await ctx.service.v2.codingRecords.update(params);
 
     if (result.affectedRows) {
       ctx.status = 204;
@@ -83,7 +88,7 @@ class CodingQuestionsController extends Controller {
     const ctx = this.ctx;
     const row = ctx.params;
 
-    const result = await ctx.service.v2.codingQuestions.destroy(row);
+    const result = await ctx.service.v2.codingRecords.destroy(row);
     if (result.affectedRows) {
       ctx.body = null;
       ctx.status = 202;
@@ -98,4 +103,4 @@ class CodingQuestionsController extends Controller {
   }
 }
 
-module.exports = CodingQuestionsController;
+module.exports = CodingRecordsController;

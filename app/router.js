@@ -17,6 +17,19 @@ module.exports = app => {
   router.resources('departments', '/api/v2/departments', controller.v2.departments);
   router.resources('validStrs', '/api/v2/validStrs', controller.v2.validStrs);
   router.resources('codingQuestions', '/api/v2/codingQuestions', controller.v2.codingQuestions);
+  router.resources('codingRecords', '/api/v2/codingRecords', controller.v2.codingRecords);
+
+  // eggjs关于restFul的定义比较粗糙，除了文档中提供的以外均需自定义
+  // eggjs并没有定义两个关联资源的接口写法，（比如OJ中某用户的所有做题信息）
+  // 于是我试着写一个，就有了这条实验性的路由，提供解释如下
+  // 1 最终获取的应该是codingRecords的记录，所以url的最后指向的是codingRecords
+  // 2 url中有 /stuInfos/:uId 作为补充说明，只需要获取某个具体的 uId 对应的 codingRecords 记录
+  // 3 上述查询显然是带条件的查询，应交给index()方法处理
+  router.get('codingRecords', '/api/v2/stuInfos/:uId/codingRecords', controller.v2.codingRecords.index);
+  // 也可以有如下路由，用于查询所有做过某 cqId 对应题目的用户的完成情况
+  router.get('codingRecords', '/api/v2/codingQuestions/:cqId/codingRecords', controller.v2.codingRecords.index);
+  // 当然，这种接口设计有点多此一举了，因为完全可以在查询codingRecords时候，在data中放入uId/cqId信息
+  // 而不是专门来做一条路由接口，并修改对应 controller 适配他，所以说这是一条实验性路由
 
   // emails并不是一个数据库中的“资源”，仅仅借用了REST的语义思想，目前只能create，不知道这种做法是否合适
   // 其实完全可以写成

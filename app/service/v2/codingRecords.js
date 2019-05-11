@@ -1,11 +1,11 @@
-// app/service/v2/codingQuestions.js
+// app/service/v2/codingRecords.js
 
 'use strict';
 
 const Service = require('egg').Service;
-const TableName = 'edu_coding_questions';
+const TableName = 'edu_coding_records';
 
-class CodingQuestionsService extends Service {
+class CodingRecordsService extends Service {
   async show(row) {
     const result = await this.app.mysql.get(TableName, row);
     return result;
@@ -36,4 +36,4 @@ class CodingQuestionsService extends Service {
   }
 }
 
-module.exports = CodingQuestionsService;
+module.exports = CodingRecordsService;
