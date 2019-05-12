@@ -45,7 +45,6 @@ class CodingRecordsController extends Controller {
     }
 
     params.where = query;
-
     console.log(params);
     if (params !== undefined) { // 此处应对params做验证，稍后添加(允许null)
       const result = await ctx.service.v2.codingRecords.index(params);
@@ -64,8 +63,33 @@ class CodingRecordsController extends Controller {
   async create() {
     const ctx = this.ctx;
     const params = ctx.request.body.data;
+    let queryObj = {};
+    const keyParams = {};
 
-    // 此处是否应判断是否存在类似题目？如何判断？
+    keyParams.uId = params.uId;
+    keyParams.cqId = params.cqId;
+    // 存在完成，解决，超时的记录不得添加新纪录
+    keyParams.status = [ 'done', 'unsolved', 'timeout' ];
+    queryObj.where = keyParams;
+    // console.log(queryObj.where);
+    const existRecord = await ctx.service.v2.codingRecords.index(queryObj);
+    if (existRecord[0] !== undefined) {
+      ctx.throw(409, '做题记录已存在');
+    }
+
+    queryObj = {};
+    queryObj.id = params.uId;
+    const existStu = await ctx.service.v2.stuInfos.show(queryObj);
+    if (existStu === null) {
+      ctx.throw(406, 'id为 ' + params.uId + ' 的学生不存在');
+    }
+
+    queryObj.id = params.cqId;
+    const existQuest = await ctx.service.v2.codingQuestions.show(queryObj);
+    if (existQuest === null) {
+      ctx.throw(406, 'id为 ' + params.cqId + ' 的程序题不存在');
+    }
+
     const result = await ctx.service.v2.codingRecords.create(params);
     if (result.affectedRows) {
       // console.log(result);
