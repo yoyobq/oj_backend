@@ -21,18 +21,32 @@ class CodingRecordsController extends Controller {
 
   async index() {
     const ctx = this.ctx;
-    let params = ctx.query;
+    let query = ctx.query;
+    const params = {};
 
     // 以下代码用于适配实验性路由中的:uId 或 :cqId
     // Object.keys是es6特性，该方法会返回一个由一个给定对象的自身可枚举属性组成的数组，
     // 数组中属性名的排列顺序和使用 for...in 循环遍历该对象时返回的顺序一致。
     // 在这里用于判断是否是空对象
+
+    if (query.limit !== undefined) {
+      params.limit = query.limit;
+      delete query.limit;
+    }
+    if (query.offset !== undefined) {
+      params.offset = query.offset;
+      delete query.offset;
+    }
+
     if (Object.keys(ctx.params).length !== 0) {
       // 若在url中存在 uId，或cqId，合并到查询条件中
       // 若查询条件中也存在uId/cqId，覆盖之
-      params = Object.assign(params, ctx.params);
+      query = Object.assign(query, ctx.params);
     }
 
+    params.where = query;
+
+    console.log(params);
     if (params !== undefined) { // 此处应对params做验证，稍后添加(允许null)
       const result = await ctx.service.v2.codingRecords.index(params);
       // 注意这条判断，比较容易写错 [] 不是 null，也不是 undefined

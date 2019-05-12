@@ -15,9 +15,7 @@ class StuInfosService extends Service {
 
   // get 带参数（?xx=00）
   async index(params) {
-    const result = await this.app.mysql.select(TableName, {
-      where: params,
-    });
+    const result = await this.app.mysql.select(TableName, params);
     // 此处获取的数据会有几种可能性
     // 1 null 这种情况让controller去处理
     // 2 [{} {} {}],这是最符合期待的结果，index函数展示大量数据

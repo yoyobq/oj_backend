@@ -29,10 +29,22 @@ class StuInfosController extends Controller {
   async index() {
     const ctx = this.ctx;
     // console.log(ctx.query);
-    const params = ctx.query;
+    const query = ctx.query;
+    const params = {};
 
-    // 没有全文列表的需求，因此只处理带参数的情况
-    if (JSON.stringify(params.idNumber) !== undefined) {
+    if (query.limit !== undefined) {
+      params.limit = parseInt(query.limit);
+      delete query.limit;
+    }
+    if (query.offset !== undefined) {
+      params.offset = parseInt(query.offset);
+      delete query.offset;
+    }
+
+    params.where = query;
+    console.log(params);
+
+    if (params !== undefined) {
       const result = await ctx.service.v2.stuInfos.index(params);
       // console.log(result);
       // 注意这条判断，比较容易写错 [] 不是 null，也不是 undefined

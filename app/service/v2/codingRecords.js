@@ -12,10 +12,12 @@ class CodingRecordsService extends Service {
   }
 
   async index(params) {
-    const result = await this.app.mysql.select(TableName, {
-      where: params,
-      // columns: [ '证件号码', '学号', '姓名', '性别', '所在年级', '所在学部', '所在专业', '所在班级', '是否在籍', '是否在校', '是否住宿', '是否下厂实习', '入学层次' ],
-    });
+    const result = await this.app.mysql.select(TableName, params);
+    // where: params,
+    // columns: [ '证件号码', '学号', '姓名', '性别', '所在年级', '所在学部', '所在专业', '所在班级', '是否在籍', '是否在校', '是否住宿', '是否下厂实习', '入学层次' ],
+    // orders: [['created_at','desc'], ['id','desc']],
+    // limit: 10,
+    // offset: 0  // 偏移量从第n个数据开始地区
     return result;
   }
 

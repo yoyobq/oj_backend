@@ -39,7 +39,7 @@ class StuFullInfosController extends Controller {
         ctx.throw(404, '未找到该身份证号的相关信息，请检查输入');
       }
     } else {
-      ctx.throw(400, '参数不正确');
+      ctx.throw(400, '参数不正确，必须提供证件号码');
     }
   }
 
