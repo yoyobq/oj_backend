@@ -30,11 +30,11 @@ class CodingRecordsController extends Controller {
     // 在这里用于判断是否是空对象
 
     if (query.limit !== undefined) {
-      params.limit = query.limit;
+      params.limit = parseInt(query.limit);
       delete query.limit;
     }
     if (query.offset !== undefined) {
-      params.offset = query.offset;
+      params.offset = parseInt(query.offset);
       delete query.offset;
     }
 

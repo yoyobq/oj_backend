@@ -22,10 +22,20 @@ class CodingQuestionsController extends Controller {
 
   async index() {
     const ctx = this.ctx;
-    // console.log(ctx.query);
-    const params = ctx.query;
-    // console.log(typeof params);
 
+    const query = ctx.query;
+    const params = {};
+
+    if (query.limit !== undefined) {
+      params.limit = parseInt(query.limit);
+      delete query.limit;
+    }
+    if (query.offset !== undefined) {
+      params.offset = parseInt(query.offset);
+      delete query.offset;
+    }
+
+    params.where = query;
 
     if (params !== undefined) { // 此处应对params做验证，稍后添加(允许null)
       const result = await ctx.service.v2.codingQuestions.index(params);
