@@ -94,7 +94,12 @@ class TestcasesController extends Controller {
     queryObj.cqId = params.cqId;
     const existTestcase = await ctx.service.v2.testcases.show(queryObj);
     if (existTestcase !== null) {
-      ctx.throw(406, '对应 cqId:' + params.cqId + ' 的编程题的测试用例已存在（id:' + existTestcase.id + ')，请勿重复添加');
+      ctx.body = {
+        error: '对应 cqId:' + params.cqId + ' 的编程题的测试用例已存在（id:' + existTestcase.id + ')，请勿重复添加',
+        id: existTestcase.id,
+      };
+      ctx.status = 406;
+      return;
     }
 
 
@@ -133,9 +138,6 @@ class TestcasesController extends Controller {
     // 以上
 
     params.id = row.id;
-    // console.log(row)
-    // console.log(params);
-
     const result = await ctx.service.v2.testcases.update(params);
 
     if (result.affectedRows) {
