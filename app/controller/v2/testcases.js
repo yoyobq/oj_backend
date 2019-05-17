@@ -65,17 +65,23 @@ class TestcasesController extends Controller {
     let queryObj = {};
     const keyParams = {};
 
-    keyParams.uId = params.uId;
-    keyParams.cqId = params.cqId;
-    // 存在完成，解决，超时的记录不得添加新纪录
-    keyParams.status = [ 'done', 'unsolved', 'timeout' ];
-    queryObj.where = keyParams;
-    // console.log(queryObj.where);
-    const existRecord = await ctx.service.v2.testcases.index(queryObj);
-    if (existRecord[0] !== undefined) {
-      ctx.throw(409, '做题记录已存在');
+    // 以下内容应该由egg的插件完成，这里只是提供一个临时的方法
+    // inputData,outputData都应该是 JSON字符串
+    if (params.inputData !== undefined) {
+      if (!(await this.isJsonString(params.inputData))) {
+        ctx.throw(406, 'inputData不是JSON字符串');
+      }
     }
 
+    if (params.outputData !== undefined) {
+      if (!(await this.isJsonString(params.outputData))) {
+        ctx.throw(406, 'outputData不是JSON字符串');
+      }
+    }
+    // 以上
+
+    keyParams.cqId = params.cqId;
+    queryObj.where = keyParams;
     queryObj = {};
     queryObj.id = params.cqId;
 
@@ -83,6 +89,14 @@ class TestcasesController extends Controller {
     if (existQuest === null) {
       ctx.throw(406, 'id为 ' + params.cqId + ' 的程序题不存在');
     }
+
+    delete queryObj.id;
+    queryObj.cqId = params.cqId;
+    const existTestcase = await ctx.service.v2.testcases.show(queryObj);
+    if (existTestcase !== null) {
+      ctx.throw(406, '对应 cqId:' + params.cqId + ' 的编程题的测试用例已存在（id:' + existTestcase.id + ')，请勿重复添加');
+    }
+
 
     const result = await ctx.service.v2.testcases.create(params);
     if (result.affectedRows) {
@@ -102,6 +116,21 @@ class TestcasesController extends Controller {
     const ctx = this.ctx;
     const row = ctx.params;
     const params = this.ctx.request.body.data;
+
+    // 以下内容应该由egg的插件完成，这里只是提供一个临时的方法
+    // inputData,outputData都应该是 JSON字符串
+    if (params.inputData !== undefined) {
+      if (!(await this.isJsonString(params.inputData))) {
+        ctx.throw(406, 'inputData不是JSON字符串');
+      }
+    }
+
+    if (params.outputData !== undefined) {
+      if (!(await this.isJsonString(params.outputData))) {
+        ctx.throw(406, 'outputData不是JSON字符串');
+      }
+    }
+    // 以上
 
     params.id = row.id;
     // console.log(row)
@@ -132,6 +161,18 @@ class TestcasesController extends Controller {
       // ctx.status = 501;
       ctx.throw(501, '删除失败');
     }
+  }
+
+  async isJsonString(str) {
+    try {
+      if (typeof JSON.parse(str) === 'object') {
+        return true;
+      }
+    // 此处catch无需处理，禁用eslint自动查错
+    // eslint-disable-next-line no-empty
+    } catch (e) {
+    }
+    return false;
   }
 }
 
