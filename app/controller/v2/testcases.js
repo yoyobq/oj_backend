@@ -1,13 +1,13 @@
-// app/v2/controller/codingRecords.js
-// 用于测试代码是否正确
+// app/v2/controller/testcases.js
+// 用于记录代码的测试用例
 'use strict';
 const Controller = require('egg').Controller;
 
-class CodingRecordsController extends Controller {
+class TestcasesController extends Controller {
   async show() {
     const ctx = this.ctx;
     const row = ctx.params;
-    const result = await ctx.service.v2.codingRecords.show(row);
+    const result = await ctx.service.v2.testcases.show(row);
 
 
     if (result) {
@@ -21,9 +21,13 @@ class CodingRecordsController extends Controller {
 
   async index() {
     const ctx = this.ctx;
-    let query = ctx.query;
+    const query = ctx.query;
     const params = {};
 
+    // 尽量不要出现下列情况：
+    // 若前端传来的
+    // query字符串(data)和 params(?limit=2&offset=3)中同时存在定义
+    // 则以query中的为准
     if (query.limit !== undefined) {
       params.limit = parseInt(query.limit);
       delete query.limit;
@@ -33,20 +37,16 @@ class CodingRecordsController extends Controller {
       delete query.offset;
     }
 
-    // 以下代码用于适配实验性路由中的:uId 或 :cqId
-    // Object.keys是es6特性，该方法会返回一个由一个给定对象的自身可枚举属性组成的数组，
-    // 数组中属性名的排列顺序和使用 for...in 循环遍历该对象时返回的顺序一致。
-    // 在这里用于判断是否是空对象
-    if (Object.keys(ctx.params).length !== 0) {
-      // 若在url中存在 uId，或cqId，合并到查询条件中
-      // 若查询条件中也存在uId/cqId，覆盖之
-      query = Object.assign(query, ctx.params);
-    }
-
+    // 详见codingRecords中的相关说明，此接口未开启，保留后用
+    // if (Object.keys(ctx.params).length !== 0) {
+    //   // 若在url中存在 uId，或cqId，合并到查询条件中
+    //   // 若查询条件中也存在uId/cqId，覆盖之
+    //   query = Object.assign(query, ctx.params);
+    // }
     params.where = query;
     // console.log(params);
     if (params !== undefined) { // 此处应对params做验证，稍后添加(允许null)
-      const result = await ctx.service.v2.codingRecords.index(params);
+      const result = await ctx.service.v2.testcases.index(params);
       // 注意这条判断，比较容易写错 [] 不是 null，也不是 undefined
       if (result[0] !== undefined) {
         ctx.body = result;
@@ -71,25 +71,20 @@ class CodingRecordsController extends Controller {
     keyParams.status = [ 'done', 'unsolved', 'timeout' ];
     queryObj.where = keyParams;
     // console.log(queryObj.where);
-    const existRecord = await ctx.service.v2.codingRecords.index(queryObj);
+    const existRecord = await ctx.service.v2.testcases.index(queryObj);
     if (existRecord[0] !== undefined) {
       ctx.throw(409, '做题记录已存在');
     }
 
     queryObj = {};
-    queryObj.id = params.uId;
-    const existStu = await ctx.service.v2.stuInfos.show(queryObj);
-    if (existStu === null) {
-      ctx.throw(406, 'id为 ' + params.uId + ' 的学生不存在');
-    }
-
     queryObj.id = params.cqId;
+
     const existQuest = await ctx.service.v2.codingQuestions.show(queryObj);
     if (existQuest === null) {
       ctx.throw(406, 'id为 ' + params.cqId + ' 的程序题不存在');
     }
 
-    const result = await ctx.service.v2.codingRecords.create(params);
+    const result = await ctx.service.v2.testcases.create(params);
     if (result.affectedRows) {
       // console.log(result);
       ctx.body = result.insertId;
@@ -112,7 +107,7 @@ class CodingRecordsController extends Controller {
     // console.log(row)
     // console.log(params);
 
-    const result = await ctx.service.v2.codingRecords.update(params);
+    const result = await ctx.service.v2.testcases.update(params);
 
     if (result.affectedRows) {
       ctx.status = 204;
@@ -125,9 +120,9 @@ class CodingRecordsController extends Controller {
     const ctx = this.ctx;
     const row = ctx.params;
 
-    const result = await ctx.service.v2.codingRecords.destroy(row);
+    const result = await ctx.service.v2.testcases.destroy(row);
     if (result.affectedRows) {
-      ctx.body = null;
+      // ctx.body = null;
       ctx.status = 202;
     } else {
       // ctx.body = {
@@ -140,4 +135,4 @@ class CodingRecordsController extends Controller {
   }
 }
 
-module.exports = CodingRecordsController;
+module.exports = TestcasesController;
