@@ -64,8 +64,7 @@ class CodingQuestionsController extends Controller {
       ctx.status = 201;
     } else {
       ctx.body = {
-        error: 'CREATE FAILURE',
-        detail: { message: '服务器内部错误' },
+        error: '服务器内部错误',
       };
       ctx.status = 501;
     }
@@ -103,7 +102,7 @@ class CodingQuestionsController extends Controller {
       //   detail: { message: '删除失败，未找到对应信息', field: '', code: '' },
       // };
       // ctx.status = 501;
-      ctx.throw(501, '删除失败');
+      ctx.throw(404, '删除失败');
     }
   }
 }

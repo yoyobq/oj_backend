@@ -96,7 +96,9 @@ class TestcasesController extends Controller {
     if (existTestcase !== null) {
       ctx.body = {
         error: '对应 cqId:' + params.cqId + ' 的编程题的测试用例已存在（id:' + existTestcase.id + ')，请勿重复添加',
-        id: existTestcase.id,
+        detail: {
+          id: existTestcase.id,
+        },
       };
       ctx.status = 406;
       return;
@@ -161,7 +163,7 @@ class TestcasesController extends Controller {
       //   detail: { message: '删除失败，未找到对应信息', field: '', code: '' },
       // };
       // ctx.status = 501;
-      ctx.throw(501, '删除失败');
+      ctx.throw(404, '删除失败');
     }
   }
 

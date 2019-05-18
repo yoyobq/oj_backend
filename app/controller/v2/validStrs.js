@@ -87,21 +87,19 @@ class ValidStrsController extends Controller {
           validStr: await this.createVaildString(validInfo),
         };
       } else {
-        ctx.body = {
-          error: 'CREATE FAILURE',
-          detail: { message: '服务器内部错误' },
-        };
-        ctx.status = 500;
+        // ctx.body = {
+        //   error: '服务器内部错误',
+        // };
+        // ctx.status = 500;
       }
     } else {
       ctx.body = {
-        error: 'VaildInfo is ready exists',
+        error: 'VaildInfo is ready exists 已存在未过期的验证码信息，请勿重复添加',
         detail: {
-          message: '已存在未过期的验证码信息，请勿重复添加',
           id: result[0].id,
         },
       };
-      ctx.status = 403;
+      ctx.status = 409;
     }
   }
 
@@ -114,11 +112,12 @@ class ValidStrsController extends Controller {
       ctx.body = null;
       ctx.status = 202;
     } else {
-      ctx.body = {
-        error: 'NOT IMPLEMENTED',
-        detail: { message: '删除失败，未找到对应信息', field: '', code: '' },
-      };
-      ctx.status = 501;
+      // ctx.body = {
+      //   error: 'NOT IMPLEMENTED',
+      //   detail: { message: '删除失败，未找到对应信息', field: '', code: '' },
+      // };
+      // ctx.status = 501;
+      ctx.throw(404, '删除失败, 未找到对应信息');
     }
   }
 

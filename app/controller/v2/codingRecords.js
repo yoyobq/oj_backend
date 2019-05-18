@@ -135,7 +135,7 @@ class CodingRecordsController extends Controller {
       //   detail: { message: '删除失败，未找到对应信息', field: '', code: '' },
       // };
       // ctx.status = 501;
-      ctx.throw(501, '删除失败');
+      ctx.throw(404, '删除失败，未找到对应信息');
     }
   }
 }
