@@ -19,6 +19,7 @@ module.exports = app => {
   router.resources('codingQuestions', '/api/v2/codingQuestions', controller.v2.codingQuestions);
   router.resources('codingRecords', '/api/v2/codingRecords', controller.v2.codingRecords);
   router.resources('testcases', '/api/v2/testcases', controller.v2.testcases);
+  router.resources('testPrograms', '/api/v2/testPrograms', controller.v2.testPrograms);
 
   // eggjs关于restFul的定义比较粗糙，除了文档中提供的以外均需自定义
   // eggjs并没有定义两个关联资源的接口写法，（比如OJ中某用户的所有做题信息）
@@ -33,12 +34,16 @@ module.exports = app => {
   // 而不是专门来做一条路由接口，并修改对应 controller 适配他，所以说这是一条实验性路由
 
   // emails并不是一个数据库中的“资源”，仅仅借用了REST的语义思想，目前只能create，不知道这种做法是否合适
+  // router.resources('emails', '/api/v2/emails', controller.v2.emails);
   // 其实完全可以写成
-  // router.post('emails', '/api/v2/emails', controller.v2.emails.create);
-  router.resources('emails', '/api/v2/emails', controller.v2.emails);
+  router.post('emails', '/api/v2/emails', controller.v2.emails.create);
 
-  // 代码测试
-  router.post('codeTest', '/api/v2/codeTest', controller.v2.codeTest.create);
+  // 生成Js格式的testcases或judge文件
+  router.post('createJsFile', '/api/v2/createJsFile', controller.v2.createJsFile.create);
+  router.post('createFile', '/api/v2/createFile', controller.v2.createFile.create);
+
+  // 判题
+  // router.post('judge', '/api/v2/judge', controller.v2.judge.judge);
 
   // 以下是 v1 版本的数据接口，用于小马哥的 TA 系统，作为参考保留
   //                            对象名   路由url         绑定控制器

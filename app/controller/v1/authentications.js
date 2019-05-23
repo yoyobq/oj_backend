@@ -12,6 +12,7 @@ class AuthenticationsController extends Controller {
     // const userId = ctx.params.id;
     // console.log(typeof ctx.query);
     const row = ctx.query;
+    // console.log(row);
     const user = await ctx.service.v1.authentications.show(row);
     // if (user !== null) {
     //   ctx.body = user;

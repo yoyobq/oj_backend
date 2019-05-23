@@ -8,7 +8,7 @@ const TableName = 'pf2_authentications';
 class AuthenticationsService extends Service {
   async show(row) {
     // 根据用户 id 从数据库获取用户详细信息
-    console.log(row);
+    // console.log(row);
     const user = await this.app.mysql.get(TableName, row);
     return user;
   }
