@@ -64,8 +64,22 @@ class CreateJsFileController extends Controller {
     // const runFileUrl = new URL(reservePath + testcase.cqId + '/run.js');
     const dirUrl = new URL(reservePath + result.cqId);
 
-    // 检查对应文件夹是否存在，如果不存在则生成文件夹
-    if (!fs.existsSync(dirUrl)) {
+    // 检查对应文件夹是否存在，如果不存在则生成文件夹(Sync同步版本)
+    // if (!fs.existsSync(dirUrl)) {
+    //   await this.createDir(dirUrl);
+    // }
+
+    // 检测文件夹是否存在的异步版本
+    let isDirExists = false;
+    const accessPromise = promisify(fs.access, fs);
+    // 找不到文件夹会报错，被catch捕获
+    await accessPromise(dirUrl, fs.constants.F_OK).then(function() {
+      isDirExists = true;
+    }).catch(function() {
+      isDirExists = false;
+    });
+
+    if (!isDirExists) {
       await this.createDir(dirUrl);
     }
 

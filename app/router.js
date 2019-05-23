@@ -43,7 +43,7 @@ module.exports = app => {
   router.post('createFile', '/api/v2/createFile', controller.v2.createFile.create);
 
   // 判题
-  // router.post('judge', '/api/v2/judge', controller.v2.judge.judge);
+  router.post('judge', '/api/v2/judge', controller.v2.judge.judge);
 
   // 以下是 v1 版本的数据接口，用于小马哥的 TA 系统，作为参考保留
   //                            对象名   路由url         绑定控制器
