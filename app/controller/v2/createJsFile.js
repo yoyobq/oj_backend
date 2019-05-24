@@ -147,9 +147,15 @@ class CreateJsFileController extends Controller {
       ctx.throw(406, '未在数据库中找到用户提交的代码，无法判题');
     }
 
+    if (quest.timeLimit === 0) {
+      // 若codingQuestiosn中的timeLimit为0（不限制），则给5分钟的运行时间（几乎等于不限制）
+      quest.timeLimit = 300000;
+    }
+
     // 拼接出完整的，可以带入testcases并运行的判题文档
     let content = quest.hiddenCode + '\n' +
                   codingRecord.code + '\n' +
+                  'let timeLimit = ' + quest.timeLimit + '\n' +
                   'let solution = ' + quest.preFuncName + '\n' +
                   'const testCases = require("../' + params.cqId + '/testcases.js")\n' +
                    testProgram.testCode;

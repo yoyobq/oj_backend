@@ -13,6 +13,8 @@
 // 再提供一种实验性的思路，fsPromise API也已经在node10中提供实验性的使用了
 // 也就是不需要转化的方法二，值得关注跟进
 
+
+// 此页废弃，已停止更新
 'use strict';
 const Controller = require('egg').Controller;
 
