@@ -119,14 +119,12 @@ class CreateJsFileController extends Controller {
     // 安全冗余，检查是否存在这个用户，防止绕过验证作弊的可能
     // 优化运行效率时可取消此检查
     const user = await ctx.service.v2.authentications.show({ id: params.uId });
-
     if (user === null) {
       ctx.throw(406, '非法的用户id');
     }
 
     // 需要 codingQuestions 中的 tpId 和 preFuncName
     const quest = await ctx.service.v2.codingQuestions.show({ id: params.cqId });
-
     if (quest === null) {
       ctx.throw(406, '该编程题不存在');
     }
@@ -150,7 +148,8 @@ class CreateJsFileController extends Controller {
     }
 
     // 拼接出完整的，可以带入testcases并运行的判题文档
-    let content = codingRecord.code +
+    let content = quest.hiddenCode + '\n' +
+                  codingRecord.code + '\n' +
                   'let solution = ' + quest.preFuncName + '\n' +
                   'const testCases = require("../' + params.cqId + '/testcases.js")\n' +
                    testProgram.testCode;
