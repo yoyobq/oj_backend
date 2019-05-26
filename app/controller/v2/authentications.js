@@ -50,7 +50,7 @@ class AuthenticationsController extends Controller {
     const ctx = this.ctx;
     const params = this.ctx.request.body.data;
     params.uuid = UUID.v1();
-    params.permission = '[0]';
+    params.permission = '[1]'; // [0]
     params.avatarPath = 'avatar' + Math.floor(Math.random() * 6 + 1) + '.jpg';
     // {
     //   uuid: UUID.v1(),

@@ -152,8 +152,12 @@ class CreateJsFileController extends Controller {
       quest.timeLimit = 300000;
     }
 
+    let hiddenCodeLine = '';
+    if (quest.hiddenCode !== null) {
+      hiddenCodeLine = quest.hiddenCode + '\n';
+    }
     // 拼接出完整的，可以带入testcases并运行的判题文档
-    let content = quest.hiddenCode + '\n' +
+    let content = hiddenCodeLine +
                   codingRecord.code + '\n' +
                   'let timeLimit = ' + quest.timeLimit + '\n' +
                   'let solution = ' + quest.preFuncName + '\n' +
