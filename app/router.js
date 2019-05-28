@@ -5,6 +5,8 @@
  */
 module.exports = app => {
   const { router, controller } = app;
+  router.get('count', '/api/v2/:resources/count', controller.v2.count.count);
+
   router.resources('authentications', '/api/v2/authentications', controller.v2.authentications);
   router.resources('stuFullInfos', '/api/v2/stuFullInfos', controller.v2.stuFullInfos);
   router.resources('classInfos', '/api/v2/classInfos', controller.v2.classInfos);

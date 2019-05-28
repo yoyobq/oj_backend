@@ -12,6 +12,9 @@ class CodingQuestionsController extends Controller {
 
 
     if (result) {
+      // 往header里面塞数据的一次尝试
+      // 注意前端的api只返回成功数据的 res.data
+      // ctx.set('myData', '1');
       ctx.body = result;
       ctx.status = 200;
     } else {

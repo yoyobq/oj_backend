@@ -9,7 +9,6 @@ class TestcasesController extends Controller {
     const row = ctx.params;
     const result = await ctx.service.v2.testcases.show(row);
 
-
     if (result) {
       ctx.body = result;
       ctx.status = 200;
