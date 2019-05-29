@@ -5,6 +5,8 @@
  */
 module.exports = app => {
   const { router, controller } = app;
+
+  // 这条路由如果写在后面，在某些情况下会被下列RESTful接口拦截，所以得提到最前面
   router.get('count', '/api/v2/:resources/count', controller.v2.count.count);
 
   router.resources('authentications', '/api/v2/authentications', controller.v2.authentications);

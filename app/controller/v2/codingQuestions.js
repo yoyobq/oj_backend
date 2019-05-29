@@ -26,7 +26,10 @@ class CodingQuestionsController extends Controller {
   async index() {
     const ctx = this.ctx;
 
-    const query = ctx.query;
+    let query = ctx.query;
+    if (query.params) {
+      query = JSON.parse(query.params);
+    }
     const params = {};
 
     if (query.limit !== undefined) {

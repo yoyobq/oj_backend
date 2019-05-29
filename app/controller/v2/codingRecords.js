@@ -22,6 +22,9 @@ class CodingRecordsController extends Controller {
   async index() {
     const ctx = this.ctx;
     let query = ctx.query;
+    if (query.params) {
+      query = JSON.parse(query.params);
+    }
     const params = {};
 
     if (query.limit !== undefined) {
@@ -44,7 +47,6 @@ class CodingRecordsController extends Controller {
     }
 
     params.where = query;
-    // console.log(params);
     if (params !== undefined) { // 此处应对params做验证，稍后添加(允许null)
       const result = await ctx.service.v2.codingRecords.index(params);
       // 注意这条判断，比较容易写错 [] 不是 null，也不是 undefined

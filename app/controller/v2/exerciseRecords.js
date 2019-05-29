@@ -17,7 +17,7 @@ class ExerciseRecordsController extends Controller {
       ctx.throw('获取信息失败，请检查日志');
     }
   }
-  
+
   async index() {
     const ctx = this.ctx;
     // console.log(ctx.query);

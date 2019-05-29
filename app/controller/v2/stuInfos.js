@@ -29,7 +29,10 @@ class StuInfosController extends Controller {
   async index() {
     const ctx = this.ctx;
     // console.log(ctx.query);
-    const query = ctx.query;
+    let query = ctx.query;
+    if (query.params) {
+      query = JSON.parse(query.params);
+    }
     const params = {};
 
     if (query.limit !== undefined) {
@@ -42,7 +45,7 @@ class StuInfosController extends Controller {
     }
 
     params.where = query;
-    console.log(params);
+    // console.log(params);
 
     if (params !== undefined) {
       const result = await ctx.service.v2.stuInfos.index(params);
