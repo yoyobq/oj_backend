@@ -108,9 +108,8 @@ class AuthenticationsController extends Controller {
     let row = this.ctx.request.body.data;
 
     if (row === undefined) {
-      let timeStr = (new Date()).toLocaleString();
       // 获取当前日期
-      timeStr = timeStr.replace(/\//g, '-');
+      const timeStr = this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
       // 替换2017/05/03 为    2017-05-03
       row = {
         id: ctx.params.id,
