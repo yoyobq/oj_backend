@@ -4,6 +4,7 @@
 
 const Controller = require('egg').Controller;
 const UUID = require('node-uuid');
+const moment = require('moment');
 
 class AuthenticationsController extends Controller {
 
@@ -109,7 +110,7 @@ class AuthenticationsController extends Controller {
 
     if (row === undefined) {
       // 获取当前日期
-      const timeStr = this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
+      const timeStr = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
       // 替换2017/05/03 为    2017-05-03
       row = {
         id: ctx.params.id,
