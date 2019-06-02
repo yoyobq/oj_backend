@@ -1,6 +1,6 @@
 # oj_backend
 
-for edu_platform
+for oj_platform
 
 ## QuickStart
 
