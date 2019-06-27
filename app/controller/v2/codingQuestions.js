@@ -27,6 +27,7 @@ class CodingQuestionsController extends Controller {
     const ctx = this.ctx;
 
     let query = ctx.query;
+
     if (query.params) {
       query = JSON.parse(query.params);
     }
@@ -41,7 +42,7 @@ class CodingQuestionsController extends Controller {
       delete query.offset;
     }
 
-    params.where = query;
+    params.where = JSON.parse(query.where);
 
     if (params !== undefined) { // 此处应对params做验证，稍后添加(允许null)
       const result = await ctx.service.v2.codingQuestions.index(params);
