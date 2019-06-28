@@ -21,19 +21,17 @@ class CodingRecordsController extends Controller {
 
   async index() {
     const ctx = this.ctx;
-    let query = ctx.query;
-    if (query.params) {
-      query = JSON.parse(query.params);
-    }
+    const query = ctx.query;
     const params = {};
 
+    if (query.where) {
+      params.where = JSON.parse(query.where);
+    }
     if (query.limit !== undefined) {
       params.limit = parseInt(query.limit);
-      delete query.limit;
     }
     if (query.offset !== undefined) {
       params.offset = parseInt(query.offset);
-      delete query.offset;
     }
 
     // 以下代码用于适配实验性路由中的:uId 或 :cqId
@@ -43,10 +41,9 @@ class CodingRecordsController extends Controller {
     if (Object.keys(ctx.params).length !== 0) {
       // 若在url中存在 uId，或cqId，合并到查询条件中
       // 若查询条件中也存在uId/cqId，覆盖之
-      query = Object.assign(query, ctx.params);
+      params.where = Object.assign(params.where, ctx.params);
     }
-
-    params.where = query;
+    console.log(params.where);
     if (params !== undefined) { // 此处应对params做验证，稍后添加(允许null)
       const result = await ctx.service.v2.codingRecords.index(params);
       // 注意这条判断，比较容易写错 [] 不是 null，也不是 undefined
