@@ -25,25 +25,21 @@ class CodingQuestionsController extends Controller {
 
   async index() {
     const ctx = this.ctx;
-
-    let query = ctx.query;
-
-    if (query.params) {
-      query = JSON.parse(query.params);
-    }
+    const query = ctx.query;
     const params = {};
+
+    // 附上了查询条件的话，由于是字符串，转化此条件
+    if (query.where) {
+      params.where = JSON.parse(query.where);
+    }
 
     if (query.limit !== undefined) {
       params.limit = parseInt(query.limit);
-      delete query.limit;
     }
     if (query.offset !== undefined) {
       params.offset = parseInt(query.offset);
-      delete query.offset;
     }
-
-    params.where = JSON.parse(query.where);
-
+    console.log(params);
     if (params !== undefined) { // 此处应对params做验证，稍后添加(允许null)
       const result = await ctx.service.v2.codingQuestions.index(params);
 
