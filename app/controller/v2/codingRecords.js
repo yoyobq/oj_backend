@@ -43,7 +43,7 @@ class CodingRecordsController extends Controller {
       // 若查询条件中也存在uId/cqId，覆盖之
       params.where = Object.assign(params.where, ctx.params);
     }
-    console.log(params.where);
+    // console.log(params.where);
     if (params !== undefined) { // 此处应对params做验证，稍后添加(允许null)
       const result = await ctx.service.v2.codingRecords.index(params);
       // 注意这条判断，比较容易写错 [] 不是 null，也不是 undefined
