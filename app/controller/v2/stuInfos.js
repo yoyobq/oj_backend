@@ -29,11 +29,12 @@ class StuInfosController extends Controller {
   async index() {
     const ctx = this.ctx;
     // console.log(ctx.query);
-    let query = ctx.query;
-    if (query.params) {
-      query = JSON.parse(query.params);
-    }
+    const query = ctx.query;
     const params = {};
+    // 为增加 having 加入的支持
+    if (query.where) {
+      params.where = JSON.parse(query.where);
+    }
 
     if (query.limit !== undefined) {
       params.limit = parseInt(query.limit);
@@ -43,9 +44,6 @@ class StuInfosController extends Controller {
       params.offset = parseInt(query.offset);
       delete query.offset;
     }
-
-    params.where = query;
-    // console.log(params);
 
     if (params !== undefined) {
       const result = await ctx.service.v2.stuInfos.index(params);

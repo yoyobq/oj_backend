@@ -9,10 +9,14 @@ class CountController extends Controller {
   async count() {
     const ctx = this.ctx;
     const tableName = await this.getTableName(ctx.params.resources);
-    // console.log(tableName);
-    const params = JSON.parse(ctx.query.where);
-    // console.log(params);
+    let params = '';
     let result;
+    // console.log(tableName);
+    // console.log(ctx.query.where);
+    if (ctx.query.where) {
+      params = JSON.parse(ctx.query.where);
+    }
+    // console.log(params);
     if (Object.keys(params).length !== 0) {
       result = await ctx.service.v2.count.count(tableName, params);
     } else {
